@@ -1,0 +1,51 @@
+@import '../../theme.less';
+.main-view {
+    height: 100vh;
+    .ant-layout-header {
+        height: 64px;
+        background: @primary-color;
+        text-align: center;
+        padding: 3px;
+        display: flex;
+        position: relative;
+        justify-content: space-between;
+        align-items: center;
+        .sider-title {
+            width: 200px;
+            text-align: left;
+            position: absolute;
+            top: 0px;
+            left: 50px;
+            color: white;
+            font-size: 16px;
+            font-weight: bold;
+        }
+    }
+    .main-sider {
+        height: 100%;
+        background: @body-bg;
+        .ant-menu-inline {
+            border: none;
+        }
+        border-right: 1px solid #e8e8e8
+    }
+    .ant-layout {
+        background: @body-bg;
+        .ant-layout-content {
+            height: 100%;
+            padding: 6px;
+            .list-view {
+                height: 100%;
+                overflow: auto;
+                .ant-list-split .ant-list-item {
+                    border-bottom: 1px solid #e8e8e8;
+                }
+            }
+            .bottom-pagination {
+                position: fixed;
+                right: 0;
+                bottom: 10px;
+            }
+        }
+    }
+}

@@ -1,0 +1,28 @@
+// ! important: don't import this file in other .less files
+//  instead, import the "theme.less" if necessary.
+@import '~antd/dist/antd.less';
+@import './theme.less';
+// @body-bg:  #F3F5F9;
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background: @body-bg;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+.ellipse {
+  word-break: break-all;
+  display: block;
+  max-height: 80px;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
