@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "es2018"
+    ],
+    "types": [
+      "node"
+    ],
+    "module": "commonjs",
+    "target": "es2017",
+    "sourceMap": false,
+    "noImplicitAny": false,
+    "allowJs": false,
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "suppressImplicitAnyIndexErrors": false,
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "skipLibCheck": true,
+    "incremental": true,
+    "preserveWatchOutput": true,
+    "outDir": "./build"
+  }
+}
