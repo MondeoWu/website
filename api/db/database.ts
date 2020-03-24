@@ -1,11 +1,11 @@
 import { Sequelize } from 'sequelize-typescript'
 
 const db = new Sequelize({
-  host: 'canvasrecruit-staging.cpufes8llodw.us-west-2.rds.amazonaws.com',
+  host: process.env.DB_HOST,
+  username: process.env.DB_USERNAME,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_DATABASE,
   dialect: 'mysql',
-  username: 'canvasadmin',
-  password: 'HOUWdP!oZa7v',
-  database: 'canvas',
   logging: false,
   define: {
     underscored: true,
