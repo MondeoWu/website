@@ -2,7 +2,7 @@ import * as Router from 'koa-joi-router'
 import * as Boom from 'boom'
 import log from '../../config/log'
 import { User } from '../../db/models/User'
-import { login, signUp, verifyPassword, respBody } from '../helpers/user'
+import { loginHelper, signUpHelper, verifyPassword, respBody } from '../helpers/user'
 
 export const router = Router()
 
@@ -17,8 +17,7 @@ router.route({
 router.route({
   method: 'post',
   path: '/login',
-  meta: login.meta,
-  validate: login.validate,
+  ...loginHelper,
   handler: [async (ctx) => {
     const {email, password} = ctx.request.body
     log.info('[Login] email:', email)
@@ -33,8 +32,7 @@ router.route({
 router.route({
   method: 'post',
   path: '/sign-up',
-  meta: signUp.meta,
-  validate: signUp.validate,
+  ...signUpHelper,
   handler: [async (ctx) => {
     const { email, password } = ctx.request.body
     log.info('[sign up] email:', email)

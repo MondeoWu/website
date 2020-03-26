@@ -1,4 +1,4 @@
-import { Model, Table, Column, PrimaryKey, BeforeCreate, BeforeSave } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, BeforeCreate, AutoIncrement } from 'sequelize-typescript'
 import * as bcrypt from 'bcrypt'
 import constant from '../../config/constant'
 
@@ -8,6 +8,7 @@ import constant from '../../config/constant'
 })
 export class User extends Model<User> {
   @PrimaryKey
+  @AutoIncrement
   @Column
   id: number
 

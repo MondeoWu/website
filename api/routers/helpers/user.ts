@@ -18,7 +18,7 @@ const userOutput = {
 }
 
 // login
-export const login: Config = {
+export const loginHelper: Config = {
   meta: {
     swagger: {
       summary: 'Sign up with email',
@@ -33,7 +33,7 @@ export const login: Config = {
 }
 
 // Sign up
-export const signUp: Config = {
+export const signUpHelper: Config = {
   meta: {
     swagger: {
       summary: 'Sign up with email',
