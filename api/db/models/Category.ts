@@ -12,8 +12,8 @@ export class Category extends Model<Category> {
   @Column
   name: string
 
-  @Column
-  title_image: string
+  @Column({field: 'title_image'})
+  titleImage: string
 
   @Column
   slug: string
