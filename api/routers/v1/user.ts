@@ -1,9 +1,8 @@
 import * as Router from 'koa-joi-router'
 import * as Boom from 'boom'
-import * as jwt from 'jsonwebtoken'
-import log from '../config/log'
-import { User } from '../db/models/User'
-import { login, signUp, verifyPassword, respBody } from './helpers/user'
+import log from '../../config/log'
+import { User } from '../../db/models/User'
+import { login, signUp, verifyPassword, respBody } from '../helpers/user'
 
 export const router = Router()
 
