@@ -1,6 +1,7 @@
-import { Model, Table, Column, PrimaryKey, ForeignKey, BelongsTo, AutoIncrement } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, ForeignKey, BelongsTo, AutoIncrement, HasMany } from 'sequelize-typescript'
 import { Category } from './Category'
 import { User } from './User'
+import { BusinessEmployee } from './BusinessEmployee'
 
 @Table({
   modelName: 'business',
@@ -47,4 +48,7 @@ export class Business extends Model<Business> {
 
   @Column({field: 'deleted_at'})
   deletedAt: Date
+
+  @HasMany(() => BusinessEmployee)
+  employees: BusinessEmployee[]
 }
