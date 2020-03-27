@@ -44,4 +44,7 @@ export class Business extends Model<Business> {
 
   @Column
   location: string
+
+  @Column({field: 'deleted_at'})
+  deletedAt: Date
 }
