@@ -14,4 +14,7 @@ export class UserProfile extends Model<UserProfile> {
   @ForeignKey(() => User)
   @Column({field: 'user_id'})
   userId: number
+
+  @Column
+  profileImage: string
 }

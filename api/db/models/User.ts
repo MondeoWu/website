@@ -1,7 +1,8 @@
-import { Model, Table, Column, PrimaryKey, BeforeCreate, AutoIncrement, HasMany, IsNull } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, BeforeCreate, AutoIncrement, HasMany, IsNull, HasOne } from 'sequelize-typescript'
 import * as bcrypt from 'bcrypt'
 import constant from '../../config/constant'
 import { Canvas } from './Canvas'
+import { UserProfile } from './UserProfile'
 
 @Table({
   modelName: 'user',
@@ -25,13 +26,12 @@ export class User extends Model<User> {
   @HasMany(() => Canvas)
   canvas: Canvas[]
 
+  @HasOne(() => UserProfile)
+  userProfile: UserProfile
+
   @BeforeCreate
   static hashPassword(instance: User) {
     const salt = bcrypt.genSaltSync(10)
     instance.password = bcrypt.hashSync(instance.password, salt).replace(constant.bcryptPrefixNode, constant.bcryptPrefixPhp)
-  }
-
-  profilePhoto(): string {
-    return (this.canvas[0] || {}).profilePhoto
   }
 }

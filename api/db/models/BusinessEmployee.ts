@@ -1,8 +1,7 @@
 import { Model, Table, Column, PrimaryKey, AutoIncrement, ForeignKey, BeforeSave, BeforeCreate } from 'sequelize-typescript'
 import { Business } from './Business'
 import { User } from './User'
-import Boom from 'boom'
-import { Canvas } from './Canvas'
+import { UserProfile } from './UserProfile'
 
 @Table({
   modelName: 'businessEmployee',
@@ -34,18 +33,12 @@ export class BusinessEmployee extends Model<BusinessEmployee> {
   // TODO
   @BeforeCreate
   static async hashPassword(instance: BusinessEmployee) {
-    
     const user = await User.findOne({
       where: {id: instance.userID},
-      include: [{
-        model: Canvas,
-        required: false,
-        where: { deleted_at: null }
-      }]
+      include: [UserProfile]
     })
     instance.name = instance.name || user.name
-    console.log(user.profilePhoto())
-    instance.photo = instance.photo || user.profilePhoto() || ''
+    instance.photo = instance.photo || user.UserProfile.profileImage
     instance.instagramUsername = instance.instagramUsername || instance.name
   }
 }
