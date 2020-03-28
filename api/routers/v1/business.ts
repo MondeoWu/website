@@ -1,41 +1,40 @@
 import * as Router from 'koa-joi-router'
-import { createHelper, updateHelper, deleteHelper, showHelper, employeeHelper, findBusiness } from '../helpers/business'
-import { Business } from '../../db/models/Business'
+import { createHelper, updateHelper, deleteHelper, showHelper, employeeHelper, findBusinessCanvas } from '../helpers/businessCanvas'
+import { BusinessCanvas } from '../../db/models/BusinessCanvas'
 import { User } from '../../db/models/User'
 import { BusinessEmployee } from '../../db/models/BusinessEmployee'
-import { Canvas } from '../../db/models/Canvas'
 
 export const router = Router()
 
+// create
 router.route({
   method: 'post',
   path: '/',
   ...createHelper,
   handler: [async (ctx) => {
-    console.log(ctx.request.body)
     // TODO
     const params = ctx.request.body
     params['location'] = JSON.stringify(params['location'])
-    const business = await Business.create(
+    const businessCanvas = await BusinessCanvas.create(
       { userID: ctx.state.user.id, ...ctx.request.body },
       { include: [BusinessEmployee] }
     )
-    ctx.body = { body: business }
+    ctx.body = { body: businessCanvas }
   }]
 })
 
+// update
 router.route({
   method: 'put',
   path: '/:id',
   ...updateHelper,
   handler: [async (ctx) => {
-    console.log(ctx.params.id)
-    const business = await findBusiness(ctx)
+    let businessCanvas = await findBusiness(ctx)
     // TODO
     const params = ctx.request.body
     params['location'] = JSON.stringify(params['location'])
-    await business.update(params)
-    ctx.body = { body: business }
+    businessCanvas = await businessCanvas.update(params)
+    ctx.body = { body: businessCanvas }
   }]
 })
 
@@ -45,8 +44,8 @@ router.route({
   ...deleteHelper,
   handler: [async (ctx) => {
     console.log(ctx.params.id)
-    const business = await findBusiness(ctx)
-    business.update({deletedAt: new Date().toUTCString()})
+    const businessCanvas = await findBusiness(ctx)
+    businessCanvas.update({deletedAt: new Date().toUTCString()})
     ctx.body = { body: true }
   }]
 })
@@ -69,7 +68,7 @@ router.route({
   path: '/:id',
   ...showHelper,
   handler: [async (ctx) => {
-    const business = await findBusiness(ctx)
-    ctx.body = { body: JSON.stringify(business) }
+    const businessCanvas = await findBusinessCanvas(ctx)
+    ctx.body = { body: JSON.stringify(businessCanvas) }
   }]
 })

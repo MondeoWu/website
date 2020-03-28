@@ -1,5 +1,5 @@
 import { Joi, Config } from 'koa-joi-router'
-import { Business } from '../../db/models/Business'
+import { BusinessCanvas } from '../../db/models/BusinessCanvas'
 import { Context } from 'koa'
 import Boom from 'boom'
 
@@ -26,34 +26,54 @@ const _validate: Config['validate'] = {
     }
   }
 }
- // create 
+
+ // create company info
 export const createHelper: Config = {
   meta: {
     swagger: {
-      summary: 'Create business',
-      tags: ['Business']
+      summary: 'Create company information',
+      tags: ['BusinessCanvas']
     }
   },
   validate: _validate
 }
 
-// update
+// business canvas
 export const updateHelper: Config = {
   meta: {
     swagger: {
-      summary: 'Update business',
-      tags: ['Business']
+      summary: 'Edit company canvas',
+      tags: ['BusinessCanvas']
     }
   },
-  validate: _validate
+  validate: {
+    type: 'json',
+    body: Joi.object({
+      headline: Joi.string().required(),
+      description: Joi.string().required(),
+      logo: Joi.string().required(),
+      featuredPhoto: Joi.string().required(),
+      teamPhoto: Joi.string().required(),
+      featuredVideo: Joi.array().required(),
+      paymentPreference: Joi.string().required(),
+      companyBenefits: Joi.string().required(),
+      socialMedia: Joi.object().required(),
+      ..._body
+    }),
+    output: {
+      '200': {
+        body: Joi.object()
+      }
+    }
+  }
 }
 
 // delete
 export const deleteHelper: Config = {
   meta: {
     swagger: {
-      summary: 'Delete business',
-      tags: ['Business']
+      summary: 'Delete business canvas',
+      tags: ['BusinessCanvas']
     }
   },
   validate: {
@@ -71,8 +91,8 @@ export const deleteHelper: Config = {
 export const showHelper: Config = {
   meta: {
     swagger: {
-      summary: 'Show business',
-      tags: ['Business']
+      summary: 'Show Business canvas',
+      tags: ['BusinessCanvas']
     }
   },
   validate: {
@@ -94,7 +114,7 @@ export const employeeHelper: Config = {
   meta: {
     swagger: {
       summary: 'Search employee by email or name',
-      tags: ['Business']
+      tags: ['BusinessCanvas']
     }
   },
   validate: {
@@ -117,11 +137,11 @@ export const employeeHelper: Config = {
 }
 
 const _columns = ['id', 'companyName', 'primaryContactNumber', 'businessCategoryID', 'numberOfEmployee', 'numberOfChairs', 'squareFootage', 'location']
-export const findBusiness = async (ctx: Context): Promise<Business> => {
-  const business = await Business.findOne({
+export const findBusinessCanvas = async (ctx: Context): Promise<BusinessCanvas> => {
+  const businessCanvas = await BusinessCanvas.findOne({
     where: {id: ctx.params.id, userID: ctx.state.user.id},
     attributes: _columns
   })
-  if (!business) throw Boom.notFound
-  return business
+  if (!businessCanvas) throw Boom.notFound
+  return businessCanvas
 }

@@ -4,10 +4,10 @@ import { User } from './User'
 import { BusinessEmployee } from './BusinessEmployee'
 
 @Table({
-  modelName: 'business',
+  modelName: 'businessCanvas',
   tableName: 'business_canvas'
 })
-export class Business extends Model<Business> {
+export class BusinessCanvas extends Model<BusinessCanvas> {
   @PrimaryKey
   @AutoIncrement
   @Column({field: 'id'})
@@ -23,7 +23,7 @@ export class Business extends Model<Business> {
   @Column({field: 'primary_phone'})
   primaryContactNumber: string
 
-  // Business category
+  // Business canvas category
   @ForeignKey(() => Category)
   @Column({field: 'type_of_business'})
   businessCategoryID: string

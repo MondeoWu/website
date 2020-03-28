@@ -1,6 +1,5 @@
 import * as Router from 'koa-joi-router'
-import { createHelper } from '../helpers/business'
-import { Business } from '../../db/models/Business'
+import { createHelper } from '../helpers/businessCanvas'
 
 export const router = Router()
 

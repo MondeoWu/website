@@ -1,5 +1,5 @@
 import { Model, Table, Column, PrimaryKey, AutoIncrement, ForeignKey, BeforeSave, BeforeCreate } from 'sequelize-typescript'
-import { Business } from './Business'
+import { BusinessCanvas } from './BusinessCanvas'
 import { User } from './User'
 import { UserProfile } from './UserProfile'
 
@@ -13,7 +13,7 @@ export class BusinessEmployee extends Model<BusinessEmployee> {
   @Column
   id: number
 
-  @ForeignKey(() => Business)
+  @ForeignKey(() => BusinessCanvas)
   @Column({field: 'business_canvas_id'})
   businessID: number
 
