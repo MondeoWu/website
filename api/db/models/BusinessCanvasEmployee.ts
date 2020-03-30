@@ -1,4 +1,4 @@
-import { Model, Table, Column, PrimaryKey, AutoIncrement, ForeignKey, BeforeSave, BeforeCreate } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, AutoIncrement, ForeignKey, BeforeSave, BeforeCreate, BelongsTo } from 'sequelize-typescript'
 import { BusinessCanvas } from './BusinessCanvas'
 import { User } from './User'
 import { UserProfile } from './UserProfile'
@@ -7,19 +7,14 @@ import { UserProfile } from './UserProfile'
   modelName: 'businessEmployee',
   tableName: 'business_canvas_members'
 })
-export class BusinessEmployee extends Model<BusinessEmployee> {
-  @PrimaryKey
-  @AutoIncrement
-  @Column
-  id: number
-
+export class BusinessCanvasEmployee extends Model<BusinessCanvasEmployee> {
   @ForeignKey(() => BusinessCanvas)
   @Column({field: 'business_canvas_id'})
-  businessID: number
+  businessCanvasId: number
 
   @ForeignKey(() => User)
   @Column({field: 'user_id'})
-  userID: number
+  userId: number
 
   @Column
   name: string
@@ -30,15 +25,17 @@ export class BusinessEmployee extends Model<BusinessEmployee> {
   @Column
   photo: string
 
+  _delete: boolean
+
   // TODO
   @BeforeCreate
-  static async hashPassword(instance: BusinessEmployee) {
+  static async hashPassword(instance: BusinessCanvasEmployee) {
     const user = await User.findOne({
-      where: {id: instance.userID},
+      where: {id: instance.userId},
       include: [UserProfile]
     })
     instance.name = instance.name || user.name
-    instance.photo = instance.photo || user.UserProfile.profileImage
+    instance.photo = instance.photo || (user.UserProfile || {}).profileImage || ''
     instance.instagramUsername = instance.instagramUsername || instance.name
   }
 }

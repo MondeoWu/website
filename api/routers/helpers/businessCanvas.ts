@@ -2,6 +2,16 @@ import { Joi, Config } from 'koa-joi-router'
 import { BusinessCanvas } from '../../db/models/BusinessCanvas'
 import { Context } from 'koa'
 import Boom from 'boom'
+import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
+
+const _employee = {
+  id: Joi.number().required(),
+  userId: Joi.number().required(),
+  name: Joi.string().optional(),
+  email: Joi.string().optional(),
+  photo: Joi.string().allow(null, '').optional(),
+  _destroy: Joi.boolean().allow(null).optional()
+}
 
 const _body = {
   companyName: Joi.string().required(),
@@ -10,19 +20,58 @@ const _body = {
   numberOfEmployee: Joi.string().required(),
   numberOfChairs: Joi.string().required(),
   squareFootage: Joi.string().required(),
-  location: Joi.array().required(),
-  employees: Joi.array().items(Joi.object({
-    userID: Joi.number().required(),
-    name: Joi.string().optional(),
-    instagramUsername: Joi.string().optional()
-  }))
+  location: Joi.array().items(Joi.string()).required(),
+  employees: Joi.array().items(Joi.object(_employee)).optional()
 }
+
+const _bodyAdditional = {
+  headline: Joi.string().optional(),
+  description: Joi.string().optional(),
+
+  logo: Joi.string().optional(),
+  featuredPhoto: Joi.string().optional(),
+  teamPhoto: Joi.string().optional(),
+  featuredVideo: Joi.array().items(Joi.string()).optional(),
+
+  awardsAndAchievements: Joi.array().items(Joi.object({
+    title: Joi.string().required(),
+    issuer: Joi.string().required(),
+    issueYear: Joi.string().required()
+  })).optional(),
+
+  retailBrands: Joi.array().items(Joi.number()).optional(),
+  softwareUsed: Joi.array().items(Joi.number()).optional(),
+  backbarBrands: Joi.array().items(Joi.number()).optional(),
+  specialties: Joi.array().items(Joi.number()).optional(),
+  paymentPreference: Joi.number().optional(),
+  benefits: Joi.array().items(Joi.number()).optional(),
+
+  facebookUrl: Joi.string().optional(),
+  linkedinUrl: Joi.string().optional(),
+  twitterUrl: Joi.string().optional(),
+  instagramUrl: Joi.string().optional(),
+}
+
+const _bodyOther = {
+  id: Joi.number().optional(),
+  userId: Joi.number().optional(),
+  deletedAt: Joi.any(),
+  createdAt: Joi.any(),
+  updatedAt: Joi.any()
+}
+
 const _validate: Config['validate'] = {
   type: 'json',
   body: Joi.object(_body),
   output: {
     '200': {
-      body: Joi.object()
+      body: {
+        body: Joi.object({
+          ..._body,
+          ..._bodyAdditional,
+          ..._bodyOther
+        })
+      }
     }
   }
 }
@@ -48,21 +97,16 @@ export const updateHelper: Config = {
   },
   validate: {
     type: 'json',
-    body: Joi.object({
-      headline: Joi.string().required(),
-      description: Joi.string().required(),
-      logo: Joi.string().required(),
-      featuredPhoto: Joi.string().required(),
-      teamPhoto: Joi.string().required(),
-      featuredVideo: Joi.array().required(),
-      paymentPreference: Joi.string().required(),
-      companyBenefits: Joi.string().required(),
-      socialMedia: Joi.object().required(),
-      ..._body
-    }),
+    body: Joi.object(),
     output: {
       '200': {
-        body: Joi.object()
+        body: {
+          body: Joi.object({
+            ..._body,
+            ..._bodyAdditional,
+            ..._bodyOther
+          })
+        }
       }
     }
   }
@@ -101,6 +145,7 @@ export const showHelper: Config = {
         body: {
           body: {
             ..._body,
+            ..._bodyAdditional,
             id: Joi.number().required()
           }
         }
@@ -124,12 +169,7 @@ export const employeeHelper: Config = {
     output: {
       '200': {
         body: {
-          body: Joi.array().items(Joi.object({
-            id: Joi.number().required(),
-            name: Joi.string().required(),
-            email: Joi.string().required(),
-            profilePhoto: Joi.string().required()
-          }))
+          body: Joi.array().items(Joi.object(_employee))
         }
       }
     }
@@ -139,9 +179,21 @@ export const employeeHelper: Config = {
 const _columns = ['id', 'companyName', 'primaryContactNumber', 'businessCategoryID', 'numberOfEmployee', 'numberOfChairs', 'squareFootage', 'location']
 export const findBusinessCanvas = async (ctx: Context): Promise<BusinessCanvas> => {
   const businessCanvas = await BusinessCanvas.findOne({
-    where: {id: ctx.params.id, userID: ctx.state.user.id},
-    attributes: _columns
+    where: {id: ctx.params.id, userId: ctx.state.user.id},
+    // attributes: _columns,
+    include: [{model: BusinessCanvasEmployee, attributes: ['id', 'userId', 'name', 'photo']}]
   })
-  if (!businessCanvas) throw Boom.notFound
+  if (!businessCanvas) throw Boom.notFound()
   return businessCanvas
+}
+
+// format params
+const _params = ['location', 'featuredVideo', 'retailBrands', 'softwareUsed', 'backbarBrands', 'specialties', 'benefits', 'awardsAndAchievements']
+export const formatParams = (params: {}): {} => {
+  for (const p of _params) {
+    if (!params[p]) continue
+
+    params[p] = JSON.stringify(params[p])
+  }
+  return params
 }

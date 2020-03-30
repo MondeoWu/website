@@ -23,7 +23,7 @@ const loadRouter = (dir: string) => {
 
       const module = require(path)
       if (module.router) {
-        const name = prefix + '/' + file.substring(0, file.lastIndexOf('.'))
+        const name = prefix + '/' + file.substring(0, file.lastIndexOf('.')).replace(/([A-Z])/, '-$1').toLowerCase()
         router.use(name, module.router.middleware())
         generator.addJoiRouter(module.router, { prefix: name })
       }

@@ -8,8 +8,14 @@ import { BusinessCanvas } from './BusinessCanvas'
 export class BusinessCanvasLocation extends Model<BusinessCanvasLocation> {
   @ForeignKey(() => BusinessCanvas)
   @Column
-  userId: number
+  businessCanvasId: number
 
-  @Column({field: 'upload_your_profile_photo'})
-  profilePhoto: string
+  @Column
+  location: string
+
+  // @Column
+  // state: string
+
+  @Column
+  deletedAt: Date
 }
