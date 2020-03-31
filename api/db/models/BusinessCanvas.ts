@@ -2,8 +2,17 @@ import { Model, Table, Column, PrimaryKey, ForeignKey, BelongsTo, AutoIncrement,
 import { Category } from './Category'
 import { User } from './User'
 import { BusinessCanvasEmployee } from './BusinessCanvasEmployee'
-import { BusinessCanvasLocation } from './BusinessCanvasLocation'
 import { PaymentReference } from './PaymentReference'
+import { Brand } from './Brand'
+import { Software } from './Software'
+import { Speciality } from './Speciality'
+import { CompanyBenefit } from './CompanyBenefit'
+
+function needDetail(kls) {
+  return (target, attr) => {
+    BusinessCanvas.detailColumns = (BusinessCanvas.detailColumns || []).concat({kls, name: attr})
+  }
+}
 
 @Table({
   modelName: 'businessCanvas',
@@ -16,11 +25,14 @@ export class BusinessCanvas extends Model<BusinessCanvas> {
 
   @ForeignKey(() => PaymentReference)
   @Column({field: 'payment_plan_id'})
-  paymentPreference: string
+  paymentPreferenceId: string
 
   @ForeignKey(() => Category)
   @Column({field: 'type_of_business'})
-  businessCategoryID: string
+  businessCategoryId: string
+
+  @BelongsTo(() => PaymentReference)
+  paymentPreference: PaymentReference
 
   @BelongsTo(() => Category)
   businessCategory: Category
@@ -70,18 +82,23 @@ export class BusinessCanvas extends Model<BusinessCanvas> {
   @Column({field: 'company_video'})
   featuredVideo: string
 
+  @needDetail(Brand)
   @Column({field: 'preferred_brands_retails'})
   retailBrands: string
 
+  @needDetail(Software)
   @Column
   softwareUsed: string
 
+  @needDetail(Brand)
   @Column({field: 'preferred_brands_backbar'})
   backbarBrands: string
 
+  @needDetail(Speciality)
   @Column
   specialties: string
 
+  @needDetail(CompanyBenefit)
   @Column
   benefits: string
 
@@ -99,4 +116,19 @@ export class BusinessCanvas extends Model<BusinessCanvas> {
 
   @Column({field: 'company_instagram_url'})
   instagramUrl: string
+
+  static detailColumns: {kls: any, name: string}[]
+
+  async detail(): Promise<BusinessCanvas> {
+    for (const column of BusinessCanvas.detailColumns) {
+      if (!this[column.name]) continue
+
+      this[column.name] = await column.kls.findAll({
+        attributes: ['id', 'name'],
+        where: { id: JSON.parse(this[column.name]) }
+      })
+      console.log(column.name, this[column.name])
+    }
+    return this
+  }
 }

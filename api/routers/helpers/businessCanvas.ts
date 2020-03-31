@@ -3,11 +3,14 @@ import { BusinessCanvas } from '../../db/models/BusinessCanvas'
 import { Context } from 'koa'
 import * as Boom from 'boom'
 import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
+import { Category } from '../../db/models/Category'
+import { PaymentReference } from '../../db/models/PaymentReference'
+import { Includeable } from 'sequelize/types'
 
 const _body = {
   companyName: Joi.string().required(),
   primaryContactNumber: Joi.string().required(),
-  businessCategoryID: Joi.string().required(),
+  businessCategoryId: Joi.string().required(),
   numberOfEmployee: Joi.string().required(),
   numberOfChairs: Joi.string().required(),
   squareFootage: Joi.string().required(),
@@ -33,7 +36,7 @@ const _bodyAdditional = {
   softwareUsed: Joi.array().items(Joi.number()).optional(),
   backbarBrands: Joi.array().items(Joi.number()).optional(),
   specialties: Joi.array().items(Joi.number()).optional(),
-  paymentPreference: Joi.number().optional(),
+  paymentPreferenceId: Joi.number().optional(),
   benefits: Joi.array().items(Joi.number()).optional(),
 
   facebookUrl: Joi.string().optional(),
@@ -140,7 +143,27 @@ export const showHelper: Config = {
           body: {
             ..._body,
             ..._bodyAdditional,
-            ..._bodyOther
+            ..._bodyOther,
+            retailBrands: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
+            softwareUsed: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
+            backbarBrands: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
+            specialties: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
+            benefits: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
+            employees: Joi.array().items(Joi.object({
+              id: Joi.number(),
+              userId: Joi.number(),
+              name: Joi.string(),
+              photo: Joi.string().allow(null, '')
+            })),
+            businessCategory: Joi.object({
+              id: Joi.number().required(),
+              name: Joi.string().required(),
+              kind: Joi.number().optional()
+            }).optional(),
+            paymentPreference:  Joi.object({
+              id: Joi.number().required(),
+              name: Joi.string().required()
+            }).optional()
           }
         }
       }
@@ -148,12 +171,17 @@ export const showHelper: Config = {
   }
 }
 
-// const _columns = ['id', 'companyName', 'primaryContactNumber', 'businessCategoryID', 'numberOfEmployee', 'numberOfChairs', 'squareFootage', 'location']
-export const findBusinessCanvas = async (ctx: Context): Promise<BusinessCanvas> => {
+// const _columns = ['id', 'companyName', 'primaryContactNumber', 'businessCategoryId', 'numberOfEmployee', 'numberOfChairs', 'squareFootage', 'location']
+export const findBusinessCanvas = async (ctx: Context, isEager: boolean = false): Promise<BusinessCanvas> => {
+  let associations: Includeable[] = [{model: BusinessCanvasEmployee, attributes: ['id', 'userId', 'name', 'photo']}]
+  if (isEager) associations = associations.concat([
+    {model: Category, attributes: ['id', 'name', 'kind']},
+    {model: PaymentReference, attributes: ['id', 'name']},
+  ])
   const businessCanvas = await BusinessCanvas.findOne({
     where: {id: ctx.params.id, userId: ctx.state.user.id},
     // attributes: _columns,
-    include: [{model: BusinessCanvasEmployee, attributes: ['id', 'userId', 'name', 'photo']}]
+    include: associations
   })
   if (!businessCanvas) throw Boom.notFound()
   return businessCanvas

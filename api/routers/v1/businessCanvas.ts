@@ -2,6 +2,7 @@ import * as Router from 'koa-joi-router'
 import { createHelper, updateHelper, deleteHelper, showHelper, findBusinessCanvas, formatParams } from '../helpers/businessCanvas'
 import { BusinessCanvas } from '../../db/models/BusinessCanvas'
 import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
+import { Category } from '../../db/models/Category'
 
 export const router = Router()
 
@@ -86,7 +87,7 @@ router.route({
   path: '/:id',
   ...showHelper,
   handler: [async (ctx) => {
-    const businessCanvas = await findBusinessCanvas(ctx)
+    const businessCanvas = await (await findBusinessCanvas(ctx, true)).detail()
     ctx.body = { body: JSON.stringify(businessCanvas) }
   }]
 })
