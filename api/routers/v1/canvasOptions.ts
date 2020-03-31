@@ -112,7 +112,7 @@ router.route({
   meta: {
     swagger: {
       summary: 'List all categories',
-      tags: ['Category']
+      tags: ['CanvasOptions']
     }
   },
   validate: {
@@ -158,7 +158,7 @@ router.route({
   meta: {
     swagger: {
       summary: 'Create custom categories',
-      tags: ['Category']
+      tags: ['CanvasOptions']
     }
   },
   validate: {

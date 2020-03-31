@@ -5,6 +5,11 @@ export const router = Router()
 
 router.route({
   method: 'post',
+  meta: {
+    swagger: {
+      tags: ['Admin']
+    }
+  },
   path: '/',
   ...createHelper.validate,
   handler: [async (ctx) => {

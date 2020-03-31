@@ -7,14 +7,6 @@ import { loginHelper, signUpHelper, verifyPassword, respBody } from '../helpers/
 export const router = Router()
 
 router.route({
-  method: 'get',
-  path: '/info',
-  handler: [async (ctx) => {
-    ctx.body = await User.findOne({where: {id: ctx.state.user.id}})
-  }]
-})
-
-router.route({
   method: 'post',
   path: '/login',
   ...loginHelper,

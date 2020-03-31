@@ -31,21 +31,29 @@ router.route({
   path: '/:id',
   ...updateHelper,
   handler: [async (ctx) => {
-    let businessCanvas = await findBusinessCanvas(ctx)
+    const businessCanvas = await findBusinessCanvas(ctx)
+    const userIds = businessCanvas.employees.map(e => e.userId)
+    const _employees = ctx.request.body.employees
     const params = formatParams(ctx.request.body)
-    await BusinessCanvas.sequelize.transaction(async (transaction) => {
-      businessCanvas = await businessCanvas.update(params, {transaction})
-      const userIds = (await BusinessCanvasEmployee.findAll({where: {businessCanvasId: businessCanvas.id}})).map(e => e.userId)
 
-      for (const employee of businessCanvas.employees) {
+    await BusinessCanvas.sequelize.transaction(async (transaction) => {
+      await businessCanvas.update(params, {transaction})
+
+      for (const employee of (_employees || [])) {
         // id is blank, create a new record
         if (!employee.id && !userIds.includes(employee.userId)) {
           await BusinessCanvasEmployee.create({userId: employee.userId, businessCanvasId: businessCanvas.id}, {transaction})
           continue
         }
         // _delete is true, destroy the record
-        if (employee._delete) {
-          await employee.destroy({transaction})
+        if (employee._destroy && employee.id) {
+          await BusinessCanvasEmployee.destroy({
+            where: {
+              id: employee.id,
+              businessCanvasId: businessCanvas.id
+            },
+            transaction
+          })
         }
       }
     })
