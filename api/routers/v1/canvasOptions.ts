@@ -7,6 +7,8 @@ import { CompanyBenefit } from '../../db/models/CompanyBenefit'
 import { Software } from '../../db/models/Software'
 import { Speciality } from '../../db/models/Speciality'
 import { PaymentReference } from '../../db/models/PaymentReference'
+import { Model } from 'sequelize-typescript'
+import { Category } from '../../db/models/Category'
 
 export const router = Router()
 
@@ -69,7 +71,7 @@ for (const r of optionRouters) {
     path: '/' + r.name,
     meta: {
       swagger: {
-        summary: `Search ${r.name} by name`,
+        summary: `List ${r.name}`,
         tags: ['CanvasOptions']
       }
     },
@@ -86,18 +88,111 @@ for (const r of optionRouters) {
       }
     },
     handler: [async (ctx) => {
-      const res = await Brand.sequelize.query(
-        `SELECT id, name FROM ${r.table} WHERE deleted_at IS NULL`,
-        // `SELECT id, name FROM ${r.table} WHERE deleted_at IS NULL AND LOWER(name) LIKE ?`,
-        { 
-          replacements: [`%${ctx.query.q.toLowerCase()}%`],
-          model: r.kls,
-          mapToModel: true
-        }
-      )
+      // const res = await Brand.sequelize.query(
+      //   // `SELECT id, name FROM ${r.table} WHERE deleted_at IS NULL AND LOWER(name) LIKE ?`,
+      //   { 
+      //     replacements: [`%${ctx.query.q.toLowerCase()}%`],
+      //     model: r.kls,
+      //     mapToModel: true
+      //   }
+      // )
+      const _model: any = r.kls
+      const res = await _model.findAll({ attributes: ['id', 'name'] })
       ctx.body = {
         body: JSON.stringify(res)
       }
     }]
   })
 }
+
+// get categories
+router.route({
+  method: 'get',
+  path: '/category',
+  meta: {
+    swagger: {
+      summary: 'List all categories',
+      tags: ['Category']
+    }
+  },
+  validate: {
+    query: {
+      q: Joi.string().optional()
+    },
+    output: {
+      '200': {
+        body: {
+          body: Joi.array().items(Joi.object({
+            id: Joi.number().required(),
+            name: Joi.string().required(),
+          }))
+        }
+      }
+    }
+  },
+  handler: [async (ctx) => {
+    // when query string is blank, return all system categories
+    let categories: Category[] = null
+    if (!ctx.query.q) {
+      categories = await Category.scope('official').findAll({attributes: ['id', 'name']})
+    } else {
+      categories = await Category.sequelize.query(
+        'SELECT id, name FROM categories WHERE kind=1 AND deleted_at IS NULL AND LOWER(name) LIKE ?',
+        {
+          replacements: [`%${ctx.query.q.toLowerCase()}%`],
+          model: Category,
+          mapToModel: true
+        }
+      )
+    }
+    ctx.body = {
+      body: JSON.stringify(categories)
+    }
+  }]
+})
+
+// create custom categories
+router.route({
+  method: 'post',
+  path: '/category',
+  meta: {
+    swagger: {
+      summary: 'Create custom categories',
+      tags: ['Category']
+    }
+  },
+  validate: {
+    type: 'json',
+    body: Joi.object({
+      name: Joi.string().required()
+    }),
+    output: {
+      '200': {
+        body: {
+          body: {
+            id: Joi.number().required(),
+            done: Joi.boolean().required()
+          }
+        }
+      }
+    }
+  },
+  handler: [async (ctx) => {
+    const { name } = ctx.request.body
+    const params = {name, kind: 1}
+    
+    let category = await Category.findOne({
+      where: params,
+      attributes: ['id']
+    })
+    if (!category) category = await Category.create(params)
+
+    console.log(category)
+    ctx.body = {
+      body: {
+        id: category.id,
+        done: true
+      }
+    }
+  }]
+})

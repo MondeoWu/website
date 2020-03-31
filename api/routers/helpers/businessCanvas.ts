@@ -95,7 +95,7 @@ export const updateHelper: Config = {
       employees: Joi.array().items(Joi.object({
         id: Joi.number().optional(),
         userId: Joi.number().required(),
-        _destroy: Joi.boolean().required()
+        _destroy: Joi.boolean().optional()
       })).optional()
     }),
     output: _output

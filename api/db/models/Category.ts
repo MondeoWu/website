@@ -1,14 +1,14 @@
-import { Model, Table, Column, PrimaryKey, BeforeCreate } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, BeforeCreate, Scopes } from 'sequelize-typescript'
 
 @Table({
   modelName: 'category',
   tableName: 'categories'
 })
+@Scopes({
+  official: { where: { kind: 0 } },
+  unofficial: { where: { kind: 1 } }
+})
 export class Category extends Model<Category> {
-  @PrimaryKey
-  @Column
-  id: number
-
   @Column
   name: string
 
@@ -20,4 +20,7 @@ export class Category extends Model<Category> {
 
   @Column
   status: string
+
+  @Column
+  kind: number
 }

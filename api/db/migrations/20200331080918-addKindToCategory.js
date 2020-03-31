@@ -2,17 +2,16 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.addColumn(
-      'business_canvas',
-      'specialties',
-      Sequelize.STRING
-    )
+    return queryInterface.addColumn('categories', 'kind', {
+      type: Sequelize.INTEGER,
+      defaultValue: 0
+    })
   },
 
   down: (queryInterface, Sequelize) => {
     return queryInterface.removeColumn(
-      'business_canvas',
-      'specialties'
+      'categories',
+      'kind'
     )
   }
 };
