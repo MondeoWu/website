@@ -1,9 +1,7 @@
 import * as Router from 'koa-joi-router'
-import { createHelper, updateHelper, deleteHelper, showHelper, employeeHelper, findBusinessCanvas, formatParams } from '../helpers/businessCanvas'
+import { createHelper, updateHelper, deleteHelper, showHelper, findBusinessCanvas, formatParams } from '../helpers/businessCanvas'
 import { BusinessCanvas } from '../../db/models/BusinessCanvas'
-import { User } from '../../db/models/User'
 import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
-import Boom from 'boom'
 
 export const router = Router()
 
@@ -18,7 +16,12 @@ router.route({
       { userId: ctx.state.user.id, ...params },
       { include: [BusinessCanvasEmployee] }
     )
-    ctx.body = { body: businessCanvas }
+    ctx.body = {
+      body: {
+        id: businessCanvas.id,
+        done: true
+      }
+    }
   }]
 })
 
@@ -47,8 +50,12 @@ router.route({
       }
     })
 
-    const res = JSON.stringify(await findBusinessCanvas(ctx))
-    ctx.body = { body: res }
+    ctx.body = {
+      body: {
+        id: businessCanvas.id,
+        done: true
+      }
+    }
   }]
 })
 
@@ -65,25 +72,7 @@ router.route({
   }]
 })
 
-// search employee by email or name
-router.route({
-  method: 'get',
-  path: '/employee',
-  ...employeeHelper,
-  handler: [async (ctx) => {
-    const res = await User.sequelize.query(
-      ` SELECT u.id, u.name, u.email, up.profile_image profilePhoto
-        FROM users u
-        LEFT JOIN user_profiles up ON up.user_id=u.id
-        WHERE u.name LIKE :query OR u.email LIKE :query
-        ORDER BY u.name ASC`,
-      { replacements: { query: `%${ctx.query.q.toLowerCase()}%` }}
-    )
-    ctx.body = { body: JSON.stringify(res[0]) }
-  }]
-})
-
-// get business employee detail
+// show business canvas detail
 router.route({
   method: 'get',
   path: '/:id',

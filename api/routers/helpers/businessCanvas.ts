@@ -1,17 +1,8 @@
 import { Joi, Config } from 'koa-joi-router'
 import { BusinessCanvas } from '../../db/models/BusinessCanvas'
 import { Context } from 'koa'
-import Boom from 'boom'
+import * as Boom from 'boom'
 import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
-
-const _employee = {
-  id: Joi.number().required(),
-  userId: Joi.number().required(),
-  name: Joi.string().optional(),
-  email: Joi.string().optional(),
-  photo: Joi.string().allow(null, '').optional(),
-  _destroy: Joi.boolean().allow(null).optional()
-}
 
 const _body = {
   companyName: Joi.string().required(),
@@ -20,8 +11,7 @@ const _body = {
   numberOfEmployee: Joi.string().required(),
   numberOfChairs: Joi.string().required(),
   squareFootage: Joi.string().required(),
-  location: Joi.array().items(Joi.string()).required(),
-  employees: Joi.array().items(Joi.object(_employee)).optional()
+  location: Joi.array().items(Joi.string()).required()
 }
 
 const _bodyAdditional = {
@@ -60,23 +50,17 @@ const _bodyOther = {
   updatedAt: Joi.any()
 }
 
-const _validate: Config['validate'] = {
-  type: 'json',
-  body: Joi.object(_body),
-  output: {
-    '200': {
-      body: {
-        body: Joi.object({
-          ..._body,
-          ..._bodyAdditional,
-          ..._bodyOther
-        })
-      }
+const _output = {
+  '200': {
+    body: {
+      body: Joi.object({
+        id: Joi.number().required(),
+        done: Joi.boolean().required()
+      })
     }
   }
 }
-
- // create company info
+// create company info
 export const createHelper: Config = {
   meta: {
     swagger: {
@@ -84,9 +68,17 @@ export const createHelper: Config = {
       tags: ['BusinessCanvas']
     }
   },
-  validate: _validate
+  validate: {
+    type: 'json',
+    body: Joi.object({
+      ..._body,
+      employees: Joi.array().items(Joi.object({
+        userId: Joi.number().required()
+      })).optional()
+    }),
+    output: _output
+  }
 }
-
 // business canvas
 export const updateHelper: Config = {
   meta: {
@@ -97,18 +89,16 @@ export const updateHelper: Config = {
   },
   validate: {
     type: 'json',
-    body: Joi.object(),
-    output: {
-      '200': {
-        body: {
-          body: Joi.object({
-            ..._body,
-            ..._bodyAdditional,
-            ..._bodyOther
-          })
-        }
-      }
-    }
+    body: Joi.object({
+      ..._body,
+      ..._bodyAdditional,
+      employees: Joi.array().items(Joi.object({
+        id: Joi.number().optional(),
+        userId: Joi.number().required(),
+        _destroy: Joi.boolean().required()
+      })).optional()
+    }),
+    output: _output
   }
 }
 
@@ -124,7 +114,11 @@ export const deleteHelper: Config = {
     output: {
       '200': {
         body: {
-          body: Joi.boolean().required()
+          body: {
+            body: Joi.object({
+              done: Joi.boolean().required()
+            })
+          }
         }
       }
     }
@@ -146,7 +140,7 @@ export const showHelper: Config = {
           body: {
             ..._body,
             ..._bodyAdditional,
-            id: Joi.number().required()
+            ..._bodyOther
           }
         }
       }
@@ -154,29 +148,7 @@ export const showHelper: Config = {
   }
 }
 
-// employee search
-export const employeeHelper: Config = {
-  meta: {
-    swagger: {
-      summary: 'Search employee by email or name',
-      tags: ['BusinessCanvas']
-    }
-  },
-  validate: {
-    query: {
-      q: Joi.string().required()
-    },
-    output: {
-      '200': {
-        body: {
-          body: Joi.array().items(Joi.object(_employee))
-        }
-      }
-    }
-  }
-}
-
-const _columns = ['id', 'companyName', 'primaryContactNumber', 'businessCategoryID', 'numberOfEmployee', 'numberOfChairs', 'squareFootage', 'location']
+// const _columns = ['id', 'companyName', 'primaryContactNumber', 'businessCategoryID', 'numberOfEmployee', 'numberOfChairs', 'squareFootage', 'location']
 export const findBusinessCanvas = async (ctx: Context): Promise<BusinessCanvas> => {
   const businessCanvas = await BusinessCanvas.findOne({
     where: {id: ctx.params.id, userId: ctx.state.user.id},

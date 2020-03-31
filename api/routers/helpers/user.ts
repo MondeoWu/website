@@ -21,7 +21,7 @@ const userOutput = {
 export const loginHelper: Config = {
   meta: {
     swagger: {
-      summary: 'Sign up with email',
+      summary: 'login with email',
       tags: ['User']
     }
   },
