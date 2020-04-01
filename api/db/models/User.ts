@@ -1,6 +1,8 @@
-import { Model, Table, Column, PrimaryKey, BeforeCreate, BeforeSave } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, BeforeCreate, AutoIncrement, HasMany, IsNull, HasOne } from 'sequelize-typescript'
 import * as bcrypt from 'bcrypt'
 import constant from '../../config/constant'
+import { Canvas } from './Canvas'
+import { UserProfile } from './UserProfile'
 
 @Table({
   modelName: 'user',
@@ -8,6 +10,7 @@ import constant from '../../config/constant'
 })
 export class User extends Model<User> {
   @PrimaryKey
+  @AutoIncrement
   @Column
   id: number
 
@@ -19,6 +22,12 @@ export class User extends Model<User> {
 
   @Column
   name: string
+
+  @HasMany(() => Canvas)
+  canvas: Canvas[]
+
+  @HasOne(() => UserProfile)
+  userProfile: UserProfile
 
   @BeforeCreate
   static hashPassword(instance: User) {

@@ -1,25 +1,15 @@
 import * as Router from 'koa-joi-router'
 import * as Boom from 'boom'
-import * as jwt from 'jsonwebtoken'
-import log from '../config/log'
-import { User } from '../db/models/User'
-import { login, signUp, verifyPassword, respBody } from './helpers/user'
+import log from '../../config/log'
+import { User } from '../../db/models/User'
+import { loginHelper, signUpHelper, verifyPassword, respBody } from '../helpers/user'
 
 export const router = Router()
 
 router.route({
-  method: 'get',
-  path: '/info',
-  handler: [async (ctx) => {
-    ctx.body = await User.findOne({where: {id: ctx.state.user.id}})
-  }]
-})
-
-router.route({
   method: 'post',
   path: '/login',
-  meta: login.meta,
-  validate: login.validate,
+  ...loginHelper,
   handler: [async (ctx) => {
     const {email, password} = ctx.request.body
     log.info('[Login] email:', email)
@@ -34,8 +24,7 @@ router.route({
 router.route({
   method: 'post',
   path: '/sign-up',
-  meta: signUp.meta,
-  validate: signUp.validate,
+  ...signUpHelper,
   handler: [async (ctx) => {
     const { email, password } = ctx.request.body
     log.info('[sign up] email:', email)
