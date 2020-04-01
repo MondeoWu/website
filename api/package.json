@@ -9,6 +9,7 @@
   "dependencies": {
     "@sendgrid/mail": "^6.5.5",
     "@types/koa": "^2.11.2",
+    "axios": "^0.19.2",
     "bcrypt": "^4.0.1",
     "boom": "^7.3.0",
     "dotenv": "^8.2.0",
@@ -23,7 +24,8 @@
     "reflect-metadata": "^0.1.13",
     "sequelize": "^5.21.5",
     "sequelize-typescript": "^1.1.0",
-    "stack-trace": "^0.0.10"
+    "stack-trace": "^0.0.10",
+    "uuid": "^7.0.3"
   },
   "devDependencies": {
     "@types/boom": "^7.3.0",
