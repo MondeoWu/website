@@ -38,10 +38,12 @@ router.route({
   method: 'get',
   path: '/consent-callback',
   handler: [async (ctx) => {
-    const go = new GoogleOauth2(ctx.query.code)
-    await go.getToken()
+    // const go = new GoogleOauth2(ctx.query.code)
+    // await go.getToken()
     
-    ctx.status = 301
-    ctx.redirect(`https://baidu.com?sub=${go.getSub()}`)
+    // ctx.status = 301
+    // ctx.redirect(`https://baidu.com?sub=${go.getSub()}`)
+    console.log(ctx)
+    ctx.body = 200
   }]
 })

@@ -54,13 +54,16 @@ export default class GoogleOauth2 {
 
   static consentUrl(): string {
     // TODO
-    const scope = 'openid%20profile%20email'
+    const scope = 'openid profile'
     const state = `security_token=${uuidv4()}`
     const nonce = '1111-1111'
 
     const args = {
-      scope, state, nonce,
-      response_type: 'code',
+      scope,
+      state,
+      // nonce,
+      // response_type: 'code',
+      response_type: 'token',  // easier
       client_id: constant.oauth2.google.clientId,
       redirect_uri: constant.oauth2.consentRedirecttUrl,
       hd: constant.oauth2.hd
