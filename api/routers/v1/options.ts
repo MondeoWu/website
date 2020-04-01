@@ -1,5 +1,5 @@
 import * as Router from 'koa-joi-router'
-import { Joi, Config } from 'koa-joi-router'
+import { Joi } from 'koa-joi-router'
 import { User } from '../../db/models/User'
 import { Brand } from '../../db/models/Brand'
 import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
@@ -7,8 +7,8 @@ import { CompanyBenefit } from '../../db/models/CompanyBenefit'
 import { Software } from '../../db/models/Software'
 import { Speciality } from '../../db/models/Speciality'
 import { PaymentReference } from '../../db/models/PaymentReference'
-import { Model } from 'sequelize-typescript'
 import { Category } from '../../db/models/Category'
+import { UserRole } from '../../db/models/UserRole'
 
 export const router = Router()
 
@@ -63,7 +63,8 @@ const optionRouters = [
   {name: 'software', kls: Software, table: 'softwares'},          // Software you use
   {name: 'speciality', kls: Speciality, table: 'specialities'},   // Specialties
   {name: 'payment-reference', kls: PaymentReference, table: 'payment_references'},  // Payment Preference
-  {name: 'company-benefit', kls: CompanyBenefit, table: 'company_benefits'}         // Company benefits
+  {name: 'company-benefit', kls: CompanyBenefit, table: 'company_benefits'},         // Company benefits,
+  {name: 'user-role', kls: UserRole, table: 'user_roles'} // user roles
 ]
 for (const r of optionRouters) {
   router.route({
@@ -88,16 +89,8 @@ for (const r of optionRouters) {
       }
     },
     handler: [async (ctx) => {
-      // const res = await Brand.sequelize.query(
-      //   // `SELECT id, name FROM ${r.table} WHERE deleted_at IS NULL AND LOWER(name) LIKE ?`,
-      //   { 
-      //     replacements: [`%${ctx.query.q.toLowerCase()}%`],
-      //     model: r.kls,
-      //     mapToModel: true
-      //   }
-      // )
       const _model: any = r.kls
-      const res = await _model.findAll({ attributes: ['id', 'name'] })
+      const res = await _model.scope('active').findAll({ attributes: ['id', 'name'] })
       ctx.body = {
         body: JSON.stringify(res)
       }
@@ -134,10 +127,10 @@ router.route({
     // when query string is blank, return all system categories
     let categories: Category[] = null
     if (!ctx.query.q) {
-      categories = await Category.scope('official').findAll({attributes: ['id', 'name']})
+      categories = await Category.scope('official').scope('active').findAll({attributes: ['id', 'name']})
     } else {
       categories = await Category.sequelize.query(
-        'SELECT id, name FROM categories WHERE kind=1 AND deleted_at IS NULL AND LOWER(name) LIKE ?',
+        'SELECT id, name FROM categories WHERE deleted_at IS NULL AND LOWER(name) LIKE ?',
         {
           replacements: [`%${ctx.query.q.toLowerCase()}%`],
           model: Category,
@@ -181,7 +174,7 @@ router.route({
     const { name } = ctx.request.body
     const params = {name, kind: 1}
     
-    let category = await Category.findOne({
+    let category = await Category.scope('active').findOne({
       where: params,
       attributes: ['id']
     })

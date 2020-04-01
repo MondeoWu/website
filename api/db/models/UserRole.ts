@@ -1,13 +1,13 @@
 import { Model, Table, Column, Scopes } from 'sequelize-typescript'
 
 @Table({
-  modelName: 'companyBenefit',
-  tableName: 'company_benefits'
+  modelName: 'userRole',
+  tableName: 'user_roles'
 })
 @Scopes({
   active: { where: { deletedAt: null } }
 })
-export class CompanyBenefit extends Model<CompanyBenefit> {
+export class UserRole extends Model<UserRole> {
   @Column
   name: string
 

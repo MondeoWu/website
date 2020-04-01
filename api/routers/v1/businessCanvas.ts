@@ -74,7 +74,6 @@ router.route({
   path: '/:id',
   ...deleteHelper,
   handler: [async (ctx) => {
-    console.log(ctx.params.id)
     const businessCanvas = await findBusinessCanvas(ctx)
     businessCanvas.update({deletedAt: new Date().toUTCString()})
     ctx.body = { body: true }

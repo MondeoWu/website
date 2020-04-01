@@ -1,0 +1,8 @@
+#/bin/bash
+echo 'migrate...'
+
+npx sequelize db:migrate:undo  \
+  --migrations-path ./db/migrations \
+  --url mysql://root@127.0.0.1:3306/canvas
+
+echo 'migrate done'

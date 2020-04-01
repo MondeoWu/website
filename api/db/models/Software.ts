@@ -1,8 +1,11 @@
-import { Model, Table, Column } from 'sequelize-typescript'
+import { Model, Table, Column, Scopes } from 'sequelize-typescript'
 
 @Table({
   modelName: 'software',
   tableName: 'softwares'
+})
+@Scopes({
+  active: { where: { deletedAt: null } }
 })
 export class Software extends Model<Software> {
   @Column

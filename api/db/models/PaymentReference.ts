@@ -1,8 +1,11 @@
-import { Model, Table, Column } from 'sequelize-typescript'
+import { Model, Table, Column, Scopes } from 'sequelize-typescript'
 
 @Table({
   modelName: 'paymentReference',
   tableName: 'payment_references'
+})
+@Scopes({
+  active: { where: { deletedAt: null } }
 })
 export class PaymentReference extends Model<PaymentReference> {
   @Column

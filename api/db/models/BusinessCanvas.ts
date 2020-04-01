@@ -1,4 +1,4 @@
-import { Model, Table, Column, PrimaryKey, ForeignKey, BelongsTo, AutoIncrement, HasMany, BeforeCreate, BeforeSave } from 'sequelize-typescript'
+import { Model, Table, Column, ForeignKey, BelongsTo, HasMany, Scopes } from 'sequelize-typescript'
 import { Category } from './Category'
 import { User } from './User'
 import { BusinessCanvasEmployee } from './BusinessCanvasEmployee'
@@ -17,6 +17,9 @@ function needDetail(kls) {
 @Table({
   modelName: 'businessCanvas',
   tableName: 'business_canvas'
+})
+@Scopes({
+  active: { where: { deletedAt: null } }
 })
 export class BusinessCanvas extends Model<BusinessCanvas> {
   @ForeignKey(() => User)
