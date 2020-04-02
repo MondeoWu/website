@@ -1,4 +1,5 @@
-import { Model, Table, Column, PrimaryKey, BeforeCreate, Scopes } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, BeforeCreate, Scopes, ForeignKey, HasMany } from 'sequelize-typescript'
+import { UserCategory } from './UserCategory'
 
 @Table({
   modelName: 'category',
@@ -27,4 +28,7 @@ export class Category extends Model<Category> {
 
   @Column
   deletedAt: Date
+
+  @HasMany(() => UserCategory)
+  userCategories: UserCategory[]
 }

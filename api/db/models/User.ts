@@ -3,6 +3,8 @@ import * as bcrypt from 'bcrypt'
 import constant from '../../config/constant'
 import { Canvas } from './Canvas'
 import { UserProfile } from './UserProfile'
+import { SocialAccount } from './SocialAccount'
+import { UserCategory } from './UserCategory'
 
 @Table({
   modelName: 'user',
@@ -28,6 +30,12 @@ export class User extends Model<User> {
 
   @HasOne(() => UserProfile)
   userProfile: UserProfile
+
+  @HasMany(() => SocialAccount)
+  socialAccounts: SocialAccount[]
+
+  @HasMany(() => UserCategory)
+  userCategories: UserCategory[]
 
   @BeforeCreate
   static hashPassword(instance: User) {
