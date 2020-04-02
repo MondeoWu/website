@@ -3,8 +3,22 @@ import * as Boom from 'boom'
 import log from '../../config/log'
 import { User } from '../../db/models/User'
 import { loginHelper, signUpHelper, verifyPassword, respBody } from '../helpers/user'
+import { UserProfile } from '../../db/models/UserProfile'
 
 export const router = Router()
+
+router.route({
+  method: 'get',
+  path: '/info/:id',
+  handler: [async (ctx) => {
+    const user = await User.findOne({
+      where: {id: ctx.params.id},
+      include: [UserProfile]
+    })
+
+    ctx.body = user
+  }]
+})
 
 router.route({
   method: 'post',
@@ -18,7 +32,6 @@ router.route({
     if (!verifyPassword(password, user.password)) throw Boom.unauthorized('wrong password')
     ctx.body = respBody(user)
   }]
-  
 })
 
 router.route({

@@ -6,7 +6,7 @@ const db = new Sequelize({
   password: process.env.DB_PASSWORD,
   database: process.env.DB_DATABASE,
   dialect: 'mysql',
-  logging: false,
+  logging: true,
   define: {
     underscored: true,
     timestamps: true,

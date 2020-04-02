@@ -9,6 +9,10 @@ import { Speciality } from '../../db/models/Speciality'
 import { PaymentReference } from '../../db/models/PaymentReference'
 import { Category } from '../../db/models/Category'
 import { UserRole } from '../../db/models/UserRole'
+import { PermitStatus } from '../../db/models/PermitStatus'
+import { Program } from '../../db/models/Program'
+import { EmployStatus } from '../../db/models/EmployStatus'
+
 
 export const router = Router()
 
@@ -64,7 +68,10 @@ const optionRouters = [
   {name: 'speciality', kls: Speciality, table: 'specialities'},   // Specialties
   {name: 'payment-reference', kls: PaymentReference, table: 'payment_references'},  // Payment Preference
   {name: 'company-benefit', kls: CompanyBenefit, table: 'company_benefits'},         // Company benefits,
-  {name: 'user-role', kls: UserRole, table: 'user_roles'} // user roles
+  {name: 'user-role', kls: UserRole, table: 'user_roles'}, // user roles
+  {name: 'permit-status', kls: PermitStatus, table: 'permit_status'}, // permit
+  {name: 'program', kls: Program, table: 'programs'}, // program
+  {name: 'employ-status', kls: EmployStatus, table: 'employ_status'}, // employ status
 ]
 for (const r of optionRouters) {
   router.route({

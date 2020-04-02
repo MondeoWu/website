@@ -24,4 +24,7 @@ export class Category extends Model<Category> {
 
   @Column
   kind: number
+
+  @Column
+  deletedAt: Date
 }
