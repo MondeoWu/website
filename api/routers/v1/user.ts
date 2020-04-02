@@ -66,9 +66,11 @@ router.route({
     if (socialAccount && await SocialAccount.findOne({where: {platform: socialAccount.platform, uuid: socialAccount.uuid}}))
       throw Boom.badData('Social Account has been registered')
 
-    const params = { email, password, name: '', userProfile, userCategories }
+    const params = { email, password, name: '', userProfile }
     if (socialAccount)
       params['socialAccounts'] = [socialAccount]
+    if (userCategories)
+      params['userCategories'] = userCategories
     
     const user = await User.create(
       params,
