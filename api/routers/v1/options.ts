@@ -80,7 +80,7 @@ const optionRouters = [
 for (const r of optionRouters) {
   router.route({
     method: 'get',
-    path: '/' + r.name,
+    path: '/public/' + r.name,
     meta: {
       swagger: {
         summary: `List ${r.name}`,
@@ -112,7 +112,7 @@ for (const r of optionRouters) {
 // get categories
 router.route({
   method: 'get',
-  path: '/category',
+  path: '/public/category',
   meta: {
     swagger: {
       summary: 'List all categories',
@@ -159,7 +159,7 @@ router.route({
 // create custom categories
 router.route({
   method: 'post',
-  path: '/category',
+  path: '/public/category',
   meta: {
     swagger: {
       summary: 'Create custom categories',
