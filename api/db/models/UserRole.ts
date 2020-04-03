@@ -2,8 +2,9 @@ import { Table } from 'sequelize-typescript'
 import { Brand } from './Brand'
 
 @Table({
-  modelName: 'software',
-  tableName: 'softwares'
+  modelName: 'userRole',
+  tableName: 'user_roles'
 })
-export class Software extends Brand {
+export class UserRole extends Brand {
+
 }

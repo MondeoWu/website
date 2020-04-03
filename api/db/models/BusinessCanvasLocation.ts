@@ -1,9 +1,12 @@
-import { Model, Table, Column, PrimaryKey, AutoIncrement, ForeignKey } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, AutoIncrement, ForeignKey, Scopes } from 'sequelize-typescript'
 import { BusinessCanvas } from './BusinessCanvas'
 
 @Table({
   modelName: 'canvas',
   tableName: 'canvas'
+})
+@Scopes({
+  active: { where: { deletedAt: null } }
 })
 export class BusinessCanvasLocation extends Model<BusinessCanvasLocation> {
   @ForeignKey(() => BusinessCanvas)

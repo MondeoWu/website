@@ -1,16 +1,9 @@
-import { Model, Table, Column } from 'sequelize-typescript'
+import { Table } from 'sequelize-typescript'
+import { Brand } from './Brand'
 
 @Table({
   modelName: 'companyBenefit',
   tableName: 'company_benefits'
 })
-export class CompanyBenefit extends Model<CompanyBenefit> {
-  @Column
-  name: string
-
-  @Column
-  slug: string
-
-  @Column
-  deletedAt: Date
+export class CompanyBenefit extends Brand {
 }

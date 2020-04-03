@@ -1,4 +1,4 @@
-import { Model, Table, Column, PrimaryKey, ForeignKey, BelongsTo, AutoIncrement, HasMany, BeforeCreate, BeforeSave } from 'sequelize-typescript'
+import { Model, Table, Column, ForeignKey, BelongsTo, HasMany, Scopes, Default } from 'sequelize-typescript'
 import { Category } from './Category'
 import { User } from './User'
 import { BusinessCanvasEmployee } from './BusinessCanvasEmployee'
@@ -7,6 +7,7 @@ import { Brand } from './Brand'
 import { Software } from './Software'
 import { Speciality } from './Speciality'
 import { CompanyBenefit } from './CompanyBenefit'
+import constant from '../../config/constant'
 
 function needDetail(kls) {
   return (target, attr) => {
@@ -17,6 +18,9 @@ function needDetail(kls) {
 @Table({
   modelName: 'businessCanvas',
   tableName: 'business_canvas'
+})
+@Scopes({
+  active: { where: { deletedAt: null } }
 })
 export class BusinessCanvas extends Model<BusinessCanvas> {
   @ForeignKey(() => User)
@@ -116,6 +120,10 @@ export class BusinessCanvas extends Model<BusinessCanvas> {
 
   @Column({field: 'company_instagram_url'})
   instagramUrl: string
+
+  @Default(constant.businessCanvasStatusDraft)
+  @Column
+  status: string
 
   static detailColumns: {kls: any, name: string}[]
 

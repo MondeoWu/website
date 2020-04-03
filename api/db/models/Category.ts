@@ -1,4 +1,5 @@
-import { Model, Table, Column, PrimaryKey, BeforeCreate, Scopes } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, BeforeCreate, Scopes, ForeignKey, HasMany } from 'sequelize-typescript'
+import { UserCategory } from './UserCategory'
 
 @Table({
   modelName: 'category',
@@ -6,7 +7,8 @@ import { Model, Table, Column, PrimaryKey, BeforeCreate, Scopes } from 'sequeliz
 })
 @Scopes({
   official: { where: { kind: 0 } },
-  unofficial: { where: { kind: 1 } }
+  unofficial: { where: { kind: 1 } },
+  active: { where: { deletedAt: null } }
 })
 export class Category extends Model<Category> {
   @Column
@@ -23,4 +25,10 @@ export class Category extends Model<Category> {
 
   @Column
   kind: number
+
+  @Column
+  deletedAt: Date
+
+  @HasMany(() => UserCategory)
+  userCategories: UserCategory[]
 }

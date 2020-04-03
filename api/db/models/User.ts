@@ -1,8 +1,12 @@
-import { Model, Table, Column, PrimaryKey, BeforeCreate, AutoIncrement, HasMany, IsNull, HasOne } from 'sequelize-typescript'
+import { Model, Table, Column, PrimaryKey, BeforeCreate, AutoIncrement, HasMany, IsNull, HasOne, BelongsToMany } from 'sequelize-typescript'
 import * as bcrypt from 'bcrypt'
 import constant from '../../config/constant'
 import { Canvas } from './Canvas'
 import { UserProfile } from './UserProfile'
+import { SocialAccount } from './SocialAccount'
+import { UserCategory } from './UserCategory'
+import { JobTitle } from './JobTitle'
+import { UserJobTitle } from './UserJobTitle'
 
 @Table({
   modelName: 'user',
@@ -28,6 +32,15 @@ export class User extends Model<User> {
 
   @HasOne(() => UserProfile)
   userProfile: UserProfile
+
+  @HasMany(() => SocialAccount)
+  socialAccounts: SocialAccount[]
+
+  @HasMany(() => UserCategory)
+  userCategories: UserCategory[]
+
+  @BelongsToMany(() => JobTitle, () => UserJobTitle)
+  jobTitles: JobTitle[]
 
   @BeforeCreate
   static hashPassword(instance: User) {

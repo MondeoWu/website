@@ -4,10 +4,6 @@ import constant from '../../config/constant'
 import { User } from '../../db/models/User'
 import * as jwt from 'jsonwebtoken'
 
-const userBody = Joi.object({
-  email: Joi.string().email().required(),
-  password: Joi.string().regex(constant.passwordRegExp)
-})
 const userOutput = {
   '200': {
     body: {
@@ -27,7 +23,10 @@ export const loginHelper: Config = {
   },
   validate: {
     type: 'json',
-    body: userBody,
+    body: Joi.object({
+      email: Joi.string().email().required(),
+      password: Joi.string().regex(constant.passwordRegExp)
+    }),
     output: userOutput
   }
 }
@@ -42,8 +41,59 @@ export const signUpHelper: Config = {
   },
   validate: {
     type: 'json',
-    body: userBody,
+    body: Joi.object({
+      email: Joi.string(),
+      password: Joi.string(),
+      userProfile: Joi.object({
+        userRoleId: Joi.number().required(),
+        permitStatusId: Joi.number().optional(),
+        programId: Joi.number().optional(),
+        employStatusId: Joi.number().optional()
+      }).required(),
+      userCategories: Joi.array().items(Joi.object({
+        categoryId: Joi.number(),
+        licenseNo: Joi.string().optional()
+      })).optional(),
+      socialAccount: Joi.object({
+        platform: Joi.string(),
+        uuid: Joi.string(),
+        email: Joi.string(),
+        name: Joi.string(),
+        image: Joi.string()
+      }).optional()
+    }),
     output: userOutput
+  }
+}
+
+// update
+export const updateHelper: Config = {
+  meta: {
+    swagger: {
+      summary: 'Update personal information',
+      tags: ['User']
+    }
+  },
+  validate: {
+    type: 'json',
+    body: Joi.object({
+      jobTitleId: Joi.number().required(),
+      userProfile: Joi.object({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        phoneNo: Joi.number().optional()
+      })
+    }),
+    output: {
+      '200': {
+        body: {
+          body: {
+            id: Joi.number(),
+            done: Joi.boolean()
+          }
+        }
+      }
+    }
   }
 }
 
