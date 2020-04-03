@@ -1,19 +1,10 @@
-import { Model, Table, Column, Scopes } from 'sequelize-typescript'
+import { Table } from 'sequelize-typescript'
+import { Brand } from './Brand'
 
 @Table({
   modelName: 'userRole',
   tableName: 'user_roles'
 })
-@Scopes({
-  active: { where: { deletedAt: null } }
-})
-export class UserRole extends Model<UserRole> {
-  @Column
-  name: string
+export class UserRole extends Brand {
 
-  @Column
-  slug: string
-
-  @Column
-  deletedAt: Date
 }

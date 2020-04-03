@@ -6,51 +6,16 @@ import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
 import { Category } from '../../db/models/Category'
 import { PaymentReference } from '../../db/models/PaymentReference'
 import { Includeable } from 'sequelize/types'
+import { OptionaStringType, OptionalNumberType } from '../helpers/joi'
 
 const _body = {
   companyName: Joi.string().required(),
   primaryContactNumber: Joi.string().required(),
-  businessCategoryId: Joi.string().required(),
-  numberOfEmployee: Joi.string().required(),
-  numberOfChairs: Joi.string().required(),
-  squareFootage: Joi.string().required(),
+  businessCategoryId: Joi.number().required(),
+  numberOfEmployee: Joi.number().required(),
+  numberOfChairs: Joi.number().required(),
+  squareFootage: Joi.number().required(),
   location: Joi.array().items(Joi.string()).required()
-}
-
-const _bodyAdditional = {
-  headline: Joi.string().optional(),
-  description: Joi.string().optional(),
-
-  logo: Joi.string().optional(),
-  featuredPhoto: Joi.string().optional(),
-  teamPhoto: Joi.string().optional(),
-  featuredVideo: Joi.array().items(Joi.string()).optional(),
-
-  awardsAndAchievements: Joi.array().items(Joi.object({
-    title: Joi.string().required(),
-    issuer: Joi.string().required(),
-    issueYear: Joi.string().required()
-  })).optional(),
-
-  retailBrands: Joi.array().items(Joi.number()).optional(),
-  softwareUsed: Joi.array().items(Joi.number()).optional(),
-  backbarBrands: Joi.array().items(Joi.number()).optional(),
-  specialties: Joi.array().items(Joi.number()).optional(),
-  paymentPreferenceId: Joi.number().optional(),
-  benefits: Joi.array().items(Joi.number()).optional(),
-
-  facebookUrl: Joi.string().optional(),
-  linkedinUrl: Joi.string().optional(),
-  twitterUrl: Joi.string().optional(),
-  instagramUrl: Joi.string().optional(),
-}
-
-const _bodyOther = {
-  id: Joi.number().optional(),
-  userId: Joi.number().optional(),
-  deletedAt: Joi.any(),
-  createdAt: Joi.any(),
-  updatedAt: Joi.any()
 }
 
 const _output = {
@@ -94,7 +59,33 @@ export const updateHelper: Config = {
     type: 'json',
     body: Joi.object({
       ..._body,
-      ..._bodyAdditional,
+      
+      headline: Joi.string().optional(),
+      description: Joi.string().optional(),
+
+      logo: Joi.string().optional(),
+      featuredPhoto: Joi.string().optional(),
+      teamPhoto: Joi.string().optional(),
+      featuredVideo: Joi.array().items(Joi.string()).optional(),
+
+      awardsAndAchievements: Joi.array().items(Joi.object({
+        title: Joi.string().required(),
+        issuer: Joi.string().required(),
+        issueYear: Joi.string().required()
+      })).optional(),
+
+      retailBrands: Joi.array().items(Joi.number()).optional(),
+      softwareUsed: Joi.array().items(Joi.number()).optional(),
+      backbarBrands: Joi.array().items(Joi.number()).optional(),
+      specialties: Joi.array().items(Joi.number()).optional(),
+      paymentPreferenceId: Joi.number().optional(),
+      benefits: Joi.array().items(Joi.number()).optional(),
+
+      facebookUrl: Joi.string().optional(),
+      linkedinUrl: Joi.string().optional(),
+      twitterUrl: Joi.string().optional(),
+      instagramUrl: Joi.string().optional(),
+
       employees: Joi.array().items(Joi.object({
         id: Joi.number().optional(),
         userId: Joi.number().required(),
@@ -141,32 +132,67 @@ export const showHelper: Config = {
       '200': {
         body: {
           body: {
-            ..._body,
-            ..._bodyAdditional,
-            ..._bodyOther,
-            retailBrands: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
-            softwareUsed: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
-            backbarBrands: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
-            specialties: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
-            benefits: Joi.array().items(Joi.object({id: Joi.number(), name: Joi.string()})).optional(),
+            id: Joi.number(),
+            userId: OptionalNumberType,
+            companyName: OptionaStringType,
+            primaryContactNumber: OptionaStringType,
+            businessCategoryId: OptionalNumberType,
+            numberOfEmployee: OptionalNumberType,
+            numberOfChairs: OptionalNumberType,
+            squareFootage: OptionalNumberType,
+            location: Joi.array().items(OptionaStringType).required(),
+            headline: OptionaStringType,
+            description: OptionaStringType,
+            logo: OptionaStringType,
+            featuredPhoto: OptionaStringType,
+            teamPhoto: OptionaStringType,
+            featuredVideo: Joi.array().items(OptionaStringType).allow(null, '').optional(),
+            retailBrands: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
+            softwareUsed: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
+            backbarBrands: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
+            specialties: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
+            benefits: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
+            paymentPreferenceId: OptionalNumberType,
+            facebookUrl: OptionaStringType,
+            linkedinUrl: OptionaStringType,
+            twitterUrl: OptionaStringType,
+            instagramUrl: OptionaStringType,
+            awardsAndAchievements: Joi.array().items(Joi.object({
+              title: OptionaStringType,
+              issuer: OptionaStringType,
+              issueYear: OptionaStringType
+            })).allow(null).optional(),
             employees: Joi.array().items(Joi.object({
-              id: Joi.number(),
-              userId: Joi.number(),
-              name: Joi.string(),
-              photo: Joi.string().allow(null, '')
-            })),
+              id: OptionalNumberType,
+              userId: OptionalNumberType,
+              name: OptionaStringType,
+              photo: OptionaStringType
+            })).allow(null).optional(),
             businessCategory: Joi.object({
-              id: Joi.number().required(),
-              name: Joi.string().required(),
-              kind: Joi.number().optional()
-            }).optional(),
+              id: OptionalNumberType,
+              name: OptionaStringType,
+              kind: OptionalNumberType
+            }).allow(null).optional(),
             paymentPreference:  Joi.object({
-              id: Joi.number().required(),
-              name: Joi.string().required()
-            }).optional()
+              id: OptionalNumberType,
+              name: OptionaStringType
+            }).allow(null).optional(),
+            deletedAt: Joi.any(),
+            createdAt: Joi.any(),
+            updatedAt: Joi.any()
           }
         }
       }
+    }
+  }
+}
+
+// publish
+export const publishHelper: Config = {
+  meta: {
+    swagger: {
+      summary: 'publish canvas',
+      tags: ['BusinessCanvas']
     }
   }
 }

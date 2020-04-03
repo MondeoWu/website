@@ -1,8 +1,8 @@
 import * as Router from 'koa-joi-router'
-import { createHelper, updateHelper, deleteHelper, showHelper, findBusinessCanvas, formatParams } from '../helpers/businessCanvas'
+import { createHelper, updateHelper, deleteHelper, showHelper, findBusinessCanvas, formatParams, publishHelper } from '../helpers/businessCanvas'
 import { BusinessCanvas } from '../../db/models/BusinessCanvas'
 import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
-import { Category } from '../../db/models/Category'
+import constant from '../../config/constant'
 
 export const router = Router()
 
@@ -13,10 +13,13 @@ router.route({
   ...createHelper,
   handler: [async (ctx) => {
     const params = formatParams(ctx.request.body)
-    const businessCanvas = await BusinessCanvas.create(
-      { userId: ctx.state.user.id, ...params },
-      { include: [BusinessCanvasEmployee] }
-    )
+    const businessCanvas = await BusinessCanvas.sequelize.transaction(async (transaction) => {
+      return await BusinessCanvas.create(
+        { userId: ctx.state.user.id, ...params },
+        { include: [BusinessCanvasEmployee], transaction }
+      )
+    })
+    
     ctx.body = {
       body: {
         id: businessCanvas.id,
@@ -88,5 +91,23 @@ router.route({
   handler: [async (ctx) => {
     const businessCanvas = await (await findBusinessCanvas(ctx, true)).detail()
     ctx.body = { body: JSON.stringify(businessCanvas) }
+  }]
+})
+
+// publish
+router.route({
+  method: 'get',
+  path: '/publish/:id',
+  ...publishHelper,
+  handler: [async ctx => {
+    const businessCanvas = await findBusinessCanvas(ctx)
+    businessCanvas.update({status: constant.businessCanvasStatusPosted})
+
+    ctx.body = {
+      body: {
+        id: businessCanvas.id,
+        done: true
+      }
+    }
   }]
 })

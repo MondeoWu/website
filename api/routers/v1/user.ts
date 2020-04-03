@@ -72,10 +72,14 @@ router.route({
     if (userCategories)
       params['userCategories'] = userCategories
     
-    const user = await User.create(
-      params,
-      { include: [UserProfile, SocialAccount, UserCategory] }
-    )
+    const user = await User.sequelize.transaction(async (transaction) => {
+      return await User.create(
+        params, {
+          include: [UserProfile, SocialAccount, UserCategory],
+          transaction
+        }
+      )
+    })
     ctx.body = respBody(user)
   }]
 })
