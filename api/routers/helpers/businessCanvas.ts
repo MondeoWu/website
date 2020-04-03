@@ -6,7 +6,7 @@ import { BusinessCanvasEmployee } from '../../db/models/BusinessCanvasEmployee'
 import { Category } from '../../db/models/Category'
 import { PaymentReference } from '../../db/models/PaymentReference'
 import { Includeable } from 'sequelize/types'
-import { OptionaStringType, OptionalNumberType } from '../helpers/joi'
+import { OptionalStringType, OptionalNumberType } from '../helpers/joi'
 
 const _body = {
   companyName: Joi.string().required(),
@@ -134,48 +134,48 @@ export const showHelper: Config = {
           body: {
             id: Joi.number(),
             userId: OptionalNumberType,
-            companyName: OptionaStringType,
-            primaryContactNumber: OptionaStringType,
+            companyName: OptionalStringType,
+            primaryContactNumber: OptionalStringType,
             businessCategoryId: OptionalNumberType,
             numberOfEmployee: OptionalNumberType,
             numberOfChairs: OptionalNumberType,
             squareFootage: OptionalNumberType,
-            location: Joi.array().items(OptionaStringType).required(),
-            headline: OptionaStringType,
-            description: OptionaStringType,
-            logo: OptionaStringType,
-            featuredPhoto: OptionaStringType,
-            teamPhoto: OptionaStringType,
-            featuredVideo: Joi.array().items(OptionaStringType).allow(null, '').optional(),
-            retailBrands: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
-            softwareUsed: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
-            backbarBrands: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
-            specialties: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
-            benefits: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionaStringType})).allow(null, '').optional(),
+            location: Joi.array().items(OptionalStringType).required(),
+            headline: OptionalStringType,
+            description: OptionalStringType,
+            logo: OptionalStringType,
+            featuredPhoto: OptionalStringType,
+            teamPhoto: OptionalStringType,
+            featuredVideo: Joi.array().items(OptionalStringType).allow(null, '').optional(),
+            retailBrands: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionalStringType})).allow(null, '').optional(),
+            softwareUsed: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionalStringType})).allow(null, '').optional(),
+            backbarBrands: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionalStringType})).allow(null, '').optional(),
+            specialties: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionalStringType})).allow(null, '').optional(),
+            benefits: Joi.array().items(Joi.object({id: OptionalNumberType, name: OptionalStringType})).allow(null, '').optional(),
             paymentPreferenceId: OptionalNumberType,
-            facebookUrl: OptionaStringType,
-            linkedinUrl: OptionaStringType,
-            twitterUrl: OptionaStringType,
-            instagramUrl: OptionaStringType,
+            facebookUrl: OptionalStringType,
+            linkedinUrl: OptionalStringType,
+            twitterUrl: OptionalStringType,
+            instagramUrl: OptionalStringType,
             awardsAndAchievements: Joi.array().items(Joi.object({
-              title: OptionaStringType,
-              issuer: OptionaStringType,
-              issueYear: OptionaStringType
+              title: OptionalStringType,
+              issuer: OptionalStringType,
+              issueYear: OptionalStringType
             })).allow(null).optional(),
             employees: Joi.array().items(Joi.object({
               id: OptionalNumberType,
               userId: OptionalNumberType,
-              name: OptionaStringType,
-              photo: OptionaStringType
+              name: OptionalStringType,
+              photo: OptionalStringType
             })).allow(null).optional(),
             businessCategory: Joi.object({
               id: OptionalNumberType,
-              name: OptionaStringType,
+              name: OptionalStringType,
               kind: OptionalNumberType
             }).allow(null).optional(),
             paymentPreference:  Joi.object({
               id: OptionalNumberType,
-              name: OptionaStringType
+              name: OptionalStringType
             }).allow(null).optional(),
             deletedAt: Joi.any(),
             createdAt: Joi.any(),

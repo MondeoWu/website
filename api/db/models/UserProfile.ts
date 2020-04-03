@@ -52,4 +52,13 @@ export class UserProfile extends Model<UserProfile> {
 
   @Column
   profileImage: string
+
+  @Column
+  firstName: string
+
+  @Column
+  lastName: string
+
+  @Column
+  phoneNo: string
 }

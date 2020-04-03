@@ -66,6 +66,37 @@ export const signUpHelper: Config = {
   }
 }
 
+// update
+export const updateHelper: Config = {
+  meta: {
+    swagger: {
+      summary: 'Update personal information',
+      tags: ['User']
+    }
+  },
+  validate: {
+    type: 'json',
+    body: Joi.object({
+      jobTitleId: Joi.number().required(),
+      userProfile: Joi.object({
+        firstName: Joi.string().required(),
+        lastName: Joi.string().required(),
+        phoneNo: Joi.number().optional()
+      })
+    }),
+    output: {
+      '200': {
+        body: {
+          body: {
+            id: Joi.number(),
+            done: Joi.boolean()
+          }
+        }
+      }
+    }
+  }
+}
+
 export function verifyPassword(pwd: string, hash: string): boolean {
   hash = hash.replace(constant.bcryptPrefixPhp, constant.bcryptPrefixNode)
   return compareSync(pwd, hash)

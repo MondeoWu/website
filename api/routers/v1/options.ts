@@ -12,6 +12,8 @@ import { UserRole } from '../../db/models/UserRole'
 import { PermitStatus } from '../../db/models/PermitStatus'
 import { Program } from '../../db/models/Program'
 import { EmployStatus } from '../../db/models/EmployStatus'
+import { OptionalStringType } from '../helpers/joi'
+import { JobTitle } from '../../db/models/JobTitle'
 
 
 export const router = Router()
@@ -37,21 +39,22 @@ router.route({
         body: {
           body: Joi.array().items(Joi.object({
             id: Joi.number().optional(),
-            name: Joi.string().optional(),
-            email: Joi.string().optional(),
-            photo: Joi.string().allow(null, '').optional(),
+            name: OptionalStringType,
+            email: OptionalStringType,
+            photo: OptionalStringType,
           }))
         }
       }
     }
   },
   handler: [async (ctx) => {
+    // TODO
     const employees = await User.sequelize.query(
       ` SELECT u.id, u.name, u.email, up.profile_image photo
         FROM users u
         LEFT JOIN user_profiles up ON up.user_id=u.id
         WHERE LOWER(u.name) LIKE :query OR LOWER(u.email) LIKE :query
-        ORDER BY u.name ASC`,
+        ORDER BY u.name ASC LIMIT 20`,
       {
         replacements: { query: `%${ctx.query.q.toLowerCase()}%` },
         model: BusinessCanvasEmployee,
@@ -72,6 +75,7 @@ const optionRouters = [
   {name: 'permit-status', kls: PermitStatus, table: 'permit_status'}, // permit
   {name: 'program', kls: Program, table: 'programs'}, // program
   {name: 'employ-status', kls: EmployStatus, table: 'employ_status'}, // employ status
+  {name: 'job-titles', kls: JobTitle, table: 'job_titles'}, // employ status
 ]
 for (const r of optionRouters) {
   router.route({
@@ -89,7 +93,7 @@ for (const r of optionRouters) {
           body: {
             body: Joi.array().items(Joi.object({
               id: Joi.number().optional(),
-              name: Joi.string().optional(),
+              name: OptionalStringType,
             }))
           }
         }
@@ -124,7 +128,7 @@ router.route({
         body: {
           body: Joi.array().items(Joi.object({
             id: Joi.number().required(),
-            name: Joi.string().required(),
+            name: OptionalStringType,
           }))
         }
       }
@@ -136,8 +140,9 @@ router.route({
     if (!ctx.query.q) {
       categories = await Category.scope('official').scope('active').findAll({attributes: ['id', 'name']})
     } else {
+      // TODO
       categories = await Category.sequelize.query(
-        'SELECT id, name FROM categories WHERE deleted_at IS NULL AND LOWER(name) LIKE ?',
+        'SELECT id, name FROM categories WHERE deleted_at IS NULL AND LOWER(name) LIKE ? ORDER BY name ASC LIMIT 20',
         {
           replacements: [`%${ctx.query.q.toLowerCase()}%`],
           model: Category,

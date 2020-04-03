@@ -11,6 +11,9 @@ import { Program } from '../../db/models/Program'
 import { EmployStatus } from '../../db/models/EmployStatus'
 import { UserCategory } from '../../db/models/UserCategory'
 import { Category } from '../../db/models/Category'
+import { JobTitle } from '../../db/models/JobTitle'
+import { updateHelper } from '../helpers/user'
+import { UserJobTitle } from '../../db/models/UserJobTitle'
 
 export const router = Router()
 
@@ -31,7 +34,8 @@ router.route({
         { model: SocialAccount, attributes: ['id', 'uuid'] },
         { model: UserCategory, attributes: ['licenseNo'], include: [
           { model: Category, attributes: ['id', 'name'] }
-        ]}
+        ]},
+        { model: JobTitle, attributes: ['id', 'name'] }
       ]
     })
     ctx.body = user
@@ -81,5 +85,26 @@ router.route({
       )
     })
     ctx.body = respBody(user)
+  }]
+})
+
+router.route({
+  method: 'put',
+  ...updateHelper,
+  path: '/',
+  handler: [async ctx => {
+    const userId = ctx.state.user.id
+    User.sequelize.transaction(async (transaction) => {
+      const userProfile = await UserProfile.findOne({where: {userId: userId}})
+      await userProfile.update(ctx.request.body.userProfile, {transaction})
+      await UserJobTitle.create({userId, jobTitleId: ctx.request.body.jobTitleId}, {transaction})
+    })
+
+    ctx.body = {
+      body: {
+        id: userId,
+        done: true
+      }
+    }
   }]
 })
