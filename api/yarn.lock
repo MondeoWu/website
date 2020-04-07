@@ -177,6 +177,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/kcors@^2.2.3":
+  version "2.2.3"
+  resolved "https://registry.yarnpkg.com/@types/kcors/-/kcors-2.2.3.tgz#e6532132492173a8681dd85774f380834b96f571"
+  integrity sha512-ICwth6ZODezC22Yvkk5fMIESkAHhbjoqNn+yIBPJPKfG2sP9+fPmMWGBUrI3h1wjTBmbrQ1fBE6qoUMmG7yo9w==
+  dependencies:
+    "@types/koa" "*"
+
 "@types/keygrip@*":
   version "1.0.2"
   resolved "https://registry.yarnpkg.com/@types/keygrip/-/keygrip-1.0.2.tgz#513abfd256d7ad0bf1ee1873606317b33b1b2a72"
